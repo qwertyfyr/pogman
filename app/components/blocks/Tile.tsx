@@ -1,10 +1,17 @@
 export type tileType = "standard" | "wall" | "coin";
 
-export const Tile = ({ type, size }: { type: tileType; size: number }) => {
-  var x;
-  var y;
+export const Tile = ({
+  type,
+  id,
+  size,
+}: {
+  type: tileType;
+  id: string;
+  size: number;
+}) => {
   return (
     <div
+      id={id}
       className={`relative ${tileColor(type)}`}
       style={{
         width: `${size}px`,

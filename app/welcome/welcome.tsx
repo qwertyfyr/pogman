@@ -17,34 +17,41 @@ export function Welcome() {
       >
         {String(isPlaying)}
       </button>
-      <Pacman animate={isPlaying} x={startingTileCol} y={startingTileRow} />
-      <GameMap givenMap={exampleMap} className="" />
+      <Pacman animate={isPlaying} col={startingTileCol} row={startingTileRow} />
+      <GameMap givenMap={exampleMap} />
     </div>
   );
 }
 
 const Pacman = ({
   animate,
-  x,
-  y,
+  col,
+  row,
 }: {
   animate: boolean;
-  x: number;
-  y: number;
+  col: number;
+  row: number;
 }) => {
   // Toggle between the two images during animation
   const [toggle, setToggle] = useState(false);
-  const [xPosition, setXPosition] = useState(TILE * x);
-  const [yPosition, setYPosition] = useState(TILE * y);
+  const [currentCol, setCurrentCol] = useState(col);
+  const [currentRow, setCurrentRow] = useState(row);
 
-  function isTileWall(row: number, col: number) {
+  function canMoveToTile(row: number, col: number) {
     //get the GameMap[row][col]
     var tile = document.getElementById(`${row}-${col}`);
-    if (tile) {
-      if (tile.hasAttribute("type")) {
-        return tile.getAttribute("type") === "wall";
+    console.log(tile);
+    try {
+      if (tile) {
+        console.log("has tile");
+        if (tile.hasAttribute("type")) {
+          console.log("has attribute");
+          return tile.getAttribute("type") === "wall";
+        }
+        return false;
       }
-      return false;
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -56,10 +63,12 @@ const Pacman = ({
       }, 500);
     }
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "ArrowUp") setYPosition((prev) => prev - TILE);
-      if (e.key === "ArrowDown") setYPosition((prev) => prev + TILE);
-      if (e.key === "ArrowLeft") setXPosition((prev) => prev - TILE);
-      if (e.key === "ArrowRight") setXPosition((prev) => prev + TILE);
+      if (e.key === "ArrowUp")
+        canMoveToTile(currentRow, currentCol) &&
+          setCurrentRow((prev) => prev - 1);
+      if (e.key === "ArrowDown") setCurrentRow((prev) => prev + 1);
+      if (e.key === "ArrowLeft") setCurrentCol((prev) => prev - 1);
+      if (e.key === "ArrowRight") setCurrentCol((prev) => prev + 1);
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -71,7 +80,7 @@ const Pacman = ({
   return (
     <div
       className={`relative z-10`}
-      style={{ left: `${xPosition}px`, top: `${yPosition}px` }}
+      style={{ left: `${currentCol * TILE}px`, top: `${currentRow * TILE}px` }}
     >
       {animate ? (
         <img
