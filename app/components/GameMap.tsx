@@ -5,14 +5,14 @@ export const GameMap = ({
   givenMap,
   className,
 }: {
-  givenMap: string[][];
+  givenMap: string[];
   className?: string;
 }) => {
   return (
     <div className={`relative ${className}`}>
       {givenMap.map((row, rowIndex) => (
         <div key={rowIndex} className="flex">
-          {row[0]
+          {row
             .split("")
             .map((char, colIndex) =>
               renderCell(char, `${rowIndex}-${colIndex}`)
@@ -35,26 +35,26 @@ function renderCell(char: string, key: string) {
 }
 
 export var exampleMap = [
-  ["BBBBBBBBBBBBBBBBBBB"],
-  ["BCCCCCCCCBCCCCCCCCB"],
-  ["BCBBCBBBCBCBBBCBBCB"],
-  ["BCBBCBBBCBCBBBCBBCB"],
-  ["BCCCCCCCCCCCCCCCCCB"],
-  ["BCBBCBCBBBBBCBCBBCB"],
-  ["BCCCCBCCCBCCCBCCCCB"],
-  ["BBBBCBBBOBOBBBCBBBB"],
-  ["BBBBCBOOOOOOOBCBBBB"],
-  ["BBBBCBOBBOBBOBCBBBB"],
-  ["OOOOCOOBOOOBOOCOOOO"],
-  ["BBBBCBOBBBBBOBCBBBB"],
-  ["BBBBCBOOOOOOOBCBBBB"],
-  ["BBBBCBOBBBBBOBCBBBB"],
-  ["BCCCCCCCCBCCCCCCCCB"],
-  ["BCBBCBBBCBCBBBCBBCB"],
-  ["BCCBCCCCCCCCCCCBCCB"],
-  ["BBCBCBCBBBBBCBCBCBB"],
-  ["BCCCCBCCCBCCCBCCCCB"],
-  ["BCBBBBBBCBCBBBBBBCB"],
-  ["BCCCCCCCCCCCCCCCCCB"],
-  ["BBBBBBBBBBBBBBBBBBB"],
+  "BBBBBBBBBBBBBBBBBBB",
+  "BCCCCCCCCBCCCCCCCCB",
+  "BCBBCBBBCBCBBBCBBCB",
+  "BCBBCBBBCBCBBBCBBCB",
+  "BCCCCCCCCCCCCCCCCCB",
+  "BCBBCBCBBBBBCBCBBCB",
+  "BCCCCBCCCBCCCBCCCCB",
+  "BBBBCBBBOBOBBBCBBBB",
+  "BBBBCBOOOOOOOBCBBBB",
+  "BBBBCBOBBOBBOBCBBBB",
+  "OOOOCOOBOOOBOOCOOOO",
+  "BBBBCBOBBBBBOBCBBBB",
+  "BBBBCBOOOOOOOBCBBBB",
+  "BBBBCBOBBBBBOBCBBBB",
+  "BCCCCCCCCBCCCCCCCCB",
+  "BCBBCBBBCBCBBBCBBCB",
+  "BCCBCCCCCCCCCCCBCCB",
+  "BBCBCBCBBBBBCBCBCBB",
+  "BCCCCBCCCBCCCBCCCCB",
+  "BCBBBBBBCBCBBBBBBCB",
+  "BCCCCCCCCCCCCCCCCCB",
+  "BBBBBBBBBBBBBBBBBBB",
 ];
