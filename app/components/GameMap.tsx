@@ -26,11 +26,11 @@ export const GameMap = ({
 function renderCell(char: string, key: string) {
   switch (char) {
     case "O":
-      return <Tile id={key} key={key} size={TILE} type="standard" />;
+      return <Tile id={key} key={key} size={TILE} type="O" />;
     case "B":
-      return <Tile id={key} key={key} size={TILE} type="wall" />;
+      return <Tile id={key} key={key} size={TILE} type="B" />;
     case "C":
-      return <Tile id={key} key={key} size={TILE} type="coin" />;
+      return <Tile id={key} key={key} size={TILE} type="C" />;
   }
 }
 

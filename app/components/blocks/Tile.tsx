@@ -1,4 +1,4 @@
-export type tileType = "standard" | "wall" | "coin";
+export type tileType = "B" | "O" | "C";
 
 export const Tile = ({
   type,
@@ -22,8 +22,8 @@ export const Tile = ({
 };
 
 function tileColor(type: tileType) {
-  if (type === "coin") {
+  if (type === "C") {
     return "bg-yellow-500";
-  } else if (type === "wall") return "bg-purple-900";
+  } else if (type === "B") return "bg-purple-900";
   return "bg-black";
 }
