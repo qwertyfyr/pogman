@@ -1,21 +1,37 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import pauseman from "../assets/pogman0.png";
 import { exampleMap, GameMap } from "../components/GameMap";
 export const TILE = 40;
+const startingTileCol = 9;
+const startingTileRow = 12;
 export function Welcome() {
-  const startingTileCol = 9;
-  const startingTileRow = 12;
   const [isPlaying, setIsPlaying] = useState(false);
+  const [score, setScore] = useState(0);
   return (
     <div className="w-full gap-2">
       {/*Toggle between whether or not pacman is playing */}
       <button
-        onClick={() => setIsPlaying((prev) => !prev)}
+        onClick={() => {
+          setIsPlaying((prev) => !prev);
+          !isPlaying && setScore(0);
+        }}
         className="bg-slate-500"
       >
         {String(isPlaying)}
       </button>
-      <Pacman alive={true} col={startingTileCol} row={startingTileRow} />
+      <p>Score: {score}</p>
+      <Pacman
+        alive={isPlaying}
+        col={startingTileCol}
+        row={startingTileRow}
+        setScore={setScore}
+      />
       <GameMap givenMap={exampleMap} />
     </div>
   );
@@ -25,46 +41,97 @@ const Pacman = ({
   alive,
   col,
   row,
+  setScore,
 }: {
   alive: boolean;
   col: number;
   row: number;
+  setScore: Dispatch<SetStateAction<number>>;
 }) => {
+  const [direction, setDirection] = useState<
+    "UP" | "DOWN" | "LEFT" | "RIGHT" | undefined
+  >();
   const [position, setPosition] = useState({ row, col });
+
+  const directionRef = useRef(direction);
+  useEffect(() => {
+    directionRef.current = direction;
+  }, [direction]);
+  const positionRef = useRef(position);
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
   function canMoveToTile(row: number, col: number) {
     return exampleMap[row][col] !== "B";
   }
 
-  function handleKeyDown(e: KeyboardEvent) {
-    if (alive && e.key.startsWith("Arrow")) {
-      e.preventDefault();
-      setPosition((prev) => {
-        let newRow = prev.row;
-        let newCol = prev.col;
-
-        if (e.key === "ArrowUp" && canMoveToTile(prev.row - 1, prev.col))
-          newRow = prev.row - 1;
-        else if (e.key === "ArrowDown" && canMoveToTile(prev.row + 1, prev.col))
-          newRow = prev.row + 1;
-        else if (e.key === "ArrowLeft" && canMoveToTile(prev.row, prev.col - 1))
-          newCol = prev.col - 1;
-        else if (
-          e.key === "ArrowRight" &&
-          canMoveToTile(prev.row, prev.col + 1)
-        )
-          newCol = prev.col + 1;
-
-        return { row: newRow, col: newCol };
-      });
-    }
+  function updateScore(row: number, col: number) {
+    if (exampleMap[row][col] === "C") setScore((prev) => prev + 100);
   }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (!alive || !e.key.startsWith("Arrow")) return;
+    e.preventDefault();
+
+    const pos = positionRef.current;
+    setDirection((prev) => {
+      let newDirection = prev;
+      switch (e.key) {
+        case "ArrowUp":
+          if (canMoveToTile(pos.row - 1, pos.col)) newDirection = "UP";
+          break;
+
+        case "ArrowDown":
+          if (canMoveToTile(pos.row + 1, pos.col)) newDirection = "DOWN";
+          break;
+
+        case "ArrowLeft":
+          if (canMoveToTile(pos.row, pos.col - 1)) newDirection = "LEFT";
+          break;
+
+        case "ArrowRight":
+          if (canMoveToTile(pos.row, pos.col + 1)) newDirection = "RIGHT";
+          break;
+      }
+      return newDirection;
+    });
+  }
+
+  function move(direction: "UP" | "DOWN" | "LEFT" | "RIGHT" | undefined) {
+    if (!direction) return null;
+    setPosition((prev) => {
+      let newRow = prev.row;
+      let newCol = prev.col;
+      direction == "UP" && (newRow = prev.row - 1);
+      direction == "DOWN" && (newRow = prev.row + 1);
+      direction == "LEFT" && (newCol = prev.col - 1);
+      direction == "RIGHT" && (newCol = prev.col + 1);
+      if (canMoveToTile(newRow, newCol)) {
+        updateScore(newRow, newCol);
+        return { row: newRow, col: newCol };
+      }
+      return { row: prev.row, col: prev.col };
+    });
+  }
+
   useEffect(() => {
+    if (!alive) {
+      setDirection(undefined);
+      setPosition({ row: startingTileRow, col: startingTileCol });
+      return;
+    }
+
     document.addEventListener("keydown", handleKeyDown);
+    const interval = setInterval(() => {
+      move(directionRef.current);
+    }, 200);
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      clearInterval(interval);
     };
-  }, []);
+  }, [alive]);
 
   return (
     <div
