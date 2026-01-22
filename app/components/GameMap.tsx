@@ -58,3 +58,16 @@ export var exampleMap = [
   "BCCCCCCCCCCCCCCCCCB",
   "BBBBBBBBBBBBBBBBBBB",
 ];
+
+export function replaceCharInMap(
+  map: string[],
+  row: number,
+  col: number,
+  newChar: string
+) {
+  if (map[row][col] == "O") return;
+  const rowArray = map[row].split("");
+  rowArray[col] = newChar;
+  map[row] = rowArray.join("");
+}
+ 

@@ -1,21 +1,19 @@
 export type tileType = "B" | "O" | "C";
 
-export const Tile = ({
-  type,
-  id,
-  size,
-}: {
-  type: tileType;
+export type Props = {
+  tileType: tileType;
   id: string;
   size: number;
-}) => {
+};
+
+export const Tile = ({ props }: { props: Props }) => {
   return (
     <div
-      id={id}
-      className={`relative ${tileColor(type)}`}
+      id={props.id}
+      className={`relative ${tileColor(props.tileType)}`}
       style={{
-        width: `${size}px`,
-        height: `${size}px`,
+        width: `${props.size}px`,
+        height: `${props.size}px`,
       }}
     />
   );

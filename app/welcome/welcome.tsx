@@ -6,10 +6,11 @@ import {
   type SetStateAction,
 } from "react";
 import pauseman from "../assets/pogman0.png";
-import { exampleMap, GameMap } from "../components/GameMap";
+import { exampleMap, GameMap, replaceCharInMap } from "../components/GameMap";
 export const TILE = 40;
 const startingTileCol = 9;
 const startingTileRow = 12;
+
 export function Welcome() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [score, setScore] = useState(0);
@@ -37,6 +38,10 @@ export function Welcome() {
   );
 }
 
+export function canMoveToTile(row: number, col: number) {
+  return exampleMap[row][col] !== "B";
+}
+
 const Pacman = ({
   alive,
   col,
@@ -61,10 +66,6 @@ const Pacman = ({
   useEffect(() => {
     positionRef.current = position;
   }, [position]);
-
-  function canMoveToTile(row: number, col: number) {
-    return exampleMap[row][col] !== "B";
-  }
 
   function updateScore(row: number, col: number) {
     if (exampleMap[row][col] === "C") setScore((prev) => prev + 100);
@@ -109,6 +110,7 @@ const Pacman = ({
       direction == "RIGHT" && (newCol = prev.col + 1);
       if (canMoveToTile(newRow, newCol)) {
         updateScore(newRow, newCol);
+        replaceCharInMap(exampleMap, newRow, newCol, "O");
         return { row: newRow, col: newCol };
       }
       return { row: prev.row, col: prev.col };
@@ -134,14 +136,20 @@ const Pacman = ({
   }, [alive]);
 
   return (
-    <div
-      className={`relative z-10`}
-      style={{
-        top: `${position.row * TILE + TILE}px`,
-        left: `${position.col * TILE}px`,
-      }}
-    >
-      <img src={pauseman} style={{ width: `${TILE}px`, height: `${TILE}px` }} />
-    </div>
+    <>
+      <div
+        className={`relative z-10`}
+        style={{
+          top: `${position.row * TILE + TILE}px`,
+          left: `${position.col * TILE}px`,
+        }}
+      >
+        <img
+          src={pauseman}
+          style={{ width: `${TILE}px`, height: `${TILE}px` }}
+        />
+      </div>
+      <div className="size-0 border-l-[20px] border-r-[20px] border-t-[20px] border-l-transparent border-r-transparent border-t-amber-400" />
+    </>
   );
 };
